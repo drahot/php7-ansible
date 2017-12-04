@@ -1,0 +1,64 @@
+---
+# service httpd status 叩いて apache がインストール済みかどうか確認
+- name: check if exist apache src file (when failed, not installed)
+  command: service httpd status
+  ignore_errors: True
+  register: check_apache
+
+
+#####
+# Apacheのインストール
+#####
+
+# ソースのダウンロードと解答
+- name: download apache src
+  get_url: url=http://ftp.kddilabs.jp/infosystems/apache/httpd/httpd-2.4.29.tar.gz dest={{ srcpath }}
+  when: check_apache|failed
+
+- name: unzip apache src file
+  command: chdir={{ srcpath }} tar xvf httpd-2.4.29.tar.gz
+  when: check_apache|failed
+
+####
+# APR, APR-util のダウンロード＆httpd-2.4.29/srclibへのコピーする必要があるらしい
+# http://apr.apache.org/download.cgi
+###
+- name: download APR
+  get_url: url=http://ftp.kddilabs.jp/infosystems/apache/apr/apr-1.6.3.tar.gz dest={{ srcpath }}
+  when: check_apache|failed
+
+- name: unzip APR
+  command: chdir={{ srcpath }} tar xvf apr-1.6.3.tar.gz
+  when: check_apache|failed
+
+- name: move APR to srclib
+  command: mv {{ srcpath }}/apr-1.6.3 {{ srcpath }}/httpd-2.4.29/srclib
+  when: check_apache|failed
+
+- name: download APR-util
+  get_url: url=http://ftp.kddilabs.jp/infosystems/apache/apr/apr-util-1.6.1.tar.gz dest={{ srcpath }}
+  when: check_apache|failed
+
+- name: unzip APR-util
+  command: chdir={{ srcpath }} tar xvf apr-util-1.6.1.tar.gz
+  when: check_apache|failed
+
+- name: move APR-util to srclib
+  command: mv {{ srcpath }}/apr-util-1.6.1 {{ srcpath }}/httpd-2.4.29/srclib
+  when: check_apache|failed
+
+# Apacheのビルド
+- name: configure apache
+  command: chdir={{ srcpath }}/httpd-2.4.29 ./configure
+  when: check_apache|failed
+
+- name: make apache
+  command: chdir={{ srcpath }}/httpd-2.4.29 make
+  when: check_apache|failed
+
+- name: install apache
+  command: chdir={{ srcpath }}/httpd-2.4.29 make install
+  when: check_apache|failed
+
+- name: enable apache
+  service: name=httpd enabled=yes
