@@ -1,6 +1,6 @@
 ---
 - name: check if exist apache
-  command: which httpd
+  command: service httpd status
   ignore_errors: True
   register: check_apache
 
@@ -10,3 +10,9 @@
 
 - name: enable apache
   service: name=httpd enabled=yes
+
+- name: deploy config
+  template: src=httpd.conf.j2 dest=/usr/local/apache2/conf/httpd.conf
+
+- name: restart apache
+  service: name=httpd state=restarted

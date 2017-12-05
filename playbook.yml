@@ -1,6 +1,9 @@
 - hosts: all
   become: true
   user: vagrant
+  vars:
+    srcpath: /usr/local/src
   roles:
   - git
   - php7
+  - apache2_4
