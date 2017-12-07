@@ -1,0 +1,16 @@
+---
+- name: check existance /etc/httpd/conf
+  stat: path=/etc/httpd/conf
+  register: exists_etc_conf
+
+- name: deploy /etc/httpd/conf/httpd.conf
+  template: src=httpd.conf.j2 dest=/etc/httpd/conf/httpd.conf
+  when: exists_etc_conf
+
+- name: check existance /usr/local/apache2/conf
+  stat: path=/usr/local/apache2/conf
+  register: exists_usr_local_conf
+
+- name: deploy config
+  template: src=httpd.conf.j2 dest=/usr/local/apache2/conf/httpd.conf
+  when: exists_usr_local_conf

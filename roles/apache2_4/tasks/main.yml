@@ -11,6 +11,8 @@
 - name: enable apache
   service: name=httpd enabled=yes
 
+- include: config.yml
+
 - name: deploy config
   template: src=httpd.conf.j2 dest=/usr/local/apache2/conf/httpd.conf
 
