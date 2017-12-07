@@ -2,6 +2,3 @@
 - name: install composer
   shell: curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin && mv /usr/bin/composer.phar /usr/bin/composer
          creates=/usr/bin/composer
-
-- name: install laravel installer
-  command: composer global require "laravel/installer=~1.1"
