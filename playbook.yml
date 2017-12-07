@@ -6,4 +6,5 @@
   roles:
   - git
   - php7
+  - laravel
   - apache2_4
